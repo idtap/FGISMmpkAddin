@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ArcGIS defaultAssembly="FGISMmpkAddin.dll" defaultNamespace="FGISMmpkAddin" 
+        xmlns="http://schemas.esri.com/DADF/Registry" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
+  <AddInInfo id="{48825870-5a6f-4bdd-9271-6475a4c45ef6}" version="1.0" desktopVersion="3.0.34047">
+    <Name>FGISMmpkAddin</Name>
+    <Description>mmpk 製作自動化</Description>
+    <Image>Images\AddinDesktop32.png</Image>
+    <Author>Idt.Teams</Author>
+    <Company>Idt.</Company>
+    <Date>11/17/2023 12:10:56 PM, 2023</Date>
+    <Subject>Framework</Subject>
+  </AddInInfo>
+  <modules>
+    <insertModule id="FGISMmpkAddin_Module" 
+                  className="AutoMap2Mmpk" autoLoad="false" caption="AutoMap2Mmpk">
+      <tabs>
+      </tabs>
+      <groups>
+        <group id="FGISMmpkAddin_Group1" 
+               caption="手機用mmpk自動製作" appearsOnAddInTab="true" keytip="G1">
+          <!-- host controls within groups -->
+          <button refID="FGISMmpkAddin_AutoMap2MmpkButton" size="large" />
+        </group>
+      </groups>
+      <controls>
+        <!-- add your controls here -->
+        <button id="FGISMmpkAddin_AutoMap2MmpkButton" 
+                caption="自動化 mmpk 製作" 
+                className="AutoMap2MmpkButton" keytip="B1" loadOnClick="true" 
+                smallImage="Images\GenericButtonBlue16.png" 
+                largeImage="Images\GenericButtonBlue32.png">
+          <tooltip heading="Tooltip Heading">自動轉出影像及其範圍內 Feature 資料打包 mmpk 上傳 Portal<disabledText /></tooltip>
+        </button>
+      </controls>
+    </insertModule>
+  </modules>
+</ArcGIS>

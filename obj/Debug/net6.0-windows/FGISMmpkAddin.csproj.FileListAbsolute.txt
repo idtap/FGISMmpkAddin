@@ -1,0 +1,12 @@
+D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.deps.json
+D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.dll
+D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.pdb
+D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.xml
+D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\FGISMmpkAddin.csproj.AssemblyReference.cache
+D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\FGISMmpkAddin.GeneratedMSBuildEditorConfig.editorconfig
+D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\FGISMmpkAddin.csproj.CoreCompileInputs.cache
+D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\FGISMmpkAddin.dll
+D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\refint\FGISMmpkAddin.dll
+D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\FGISMmpkAddin.xml
+D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\FGISMmpkAddin.pdb
+D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\ref\FGISMmpkAddin.dll

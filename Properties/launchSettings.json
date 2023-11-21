@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ApplySymbology": {
+      "commandName": "Executable",
+      "executablePath": "D:\\ArcGISPro\\bin\\ArcGISPro.exe",
+      "commandLineArgs": ""
+    }
+  }
+}
