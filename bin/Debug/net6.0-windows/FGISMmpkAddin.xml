@@ -4,5 +4,15 @@
         <name>FGISMmpkAddin</name>
     </assembly>
     <members>
+        <member name="T:FGISMmpkAddin.GenMap2MmpkWindow">
+            <summary>
+            GenMap2MmpkWindow
+            </summary>
+        </member>
+        <member name="M:FGISMmpkAddin.GenMap2MmpkWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
     </members>
 </doc>
