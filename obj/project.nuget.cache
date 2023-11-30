@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "wMURUooCpI2w4fqagDS93Wm7iEMtcsLoC2C7kE9qUIdibVEbCEfFXl3qdTNP0PgNRBTC8FyE38m+ijG1WituXg==",
+  "dgSpecHash": "k3IMVlq8U5UvpjJWnJQdyZ3UEqN/GxZh1H/iWORdpeeHcK6JoZP6C8Pmj9kukjCxQKgyvHuxJ9o1bIXsGXkhOg==",
   "success": true,
   "projectFilePath": "D:\\保育署\\repos\\FGISMmpkAddin\\FGISMmpkAddin.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\winhu\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
   "logs": []
 }

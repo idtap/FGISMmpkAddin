@@ -26,6 +26,7 @@ namespace FGISMmpkAddin
                 return;
             }
             GenMap2MmpkWindow_Create();
+            genMap2MmpkWindow.LoadMmpkParam();
             genMap2MmpkWindow.Show();
         }
 
@@ -46,4 +47,5 @@ namespace FGISMmpkAddin
         }
 
     }
+
 }

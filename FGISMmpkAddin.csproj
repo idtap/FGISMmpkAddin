@@ -72,5 +72,13 @@
     <Content Include="DarkImages\GenericButtonRed16.png" />
     <Content Include="DarkImages\GenericButtonRed32.png" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Images\mmpkParam.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="D:\ArcGISPro\bin\Esri.ProApp.SDK.Desktop.targets" Condition="Exists('D:\ArcGISPro\bin\Esri.ProApp.SDK.Desktop.targets') AND !Exists('Esri.ArcGISPro.Extensions.targets')" />
 </Project>
