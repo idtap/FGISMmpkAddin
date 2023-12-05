@@ -1,12 +1,14 @@
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\Images\mmpkParam.json
+D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\CreateTPKX.py
+D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\empty.aprx
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.deps.json
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.dll
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.pdb
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.xml
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\Newtonsoft.Json.dll
 D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\FGISMmpkAddin.csproj.AssemblyReference.cache
-D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\GenMap2MmpkWindow.baml
-D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\GenMap2MmpkWindow.g.cs
+D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\AutoMap2MmpkDockpane.baml
+D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\AutoMap2MmpkDockpane.g.cs
 D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\FGISMmpkAddin_MarkupCompile.cache
 D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\FGISMmpkAddin.g.resources
 D:\保育署\repos\FGISMmpkAddin\obj\Debug\net6.0-windows\FGISMmpkAddin.GeneratedMSBuildEditorConfig.editorconfig

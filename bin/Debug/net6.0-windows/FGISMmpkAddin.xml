@@ -4,12 +4,12 @@
         <name>FGISMmpkAddin</name>
     </assembly>
     <members>
-        <member name="T:FGISMmpkAddin.GenMap2MmpkWindow">
+        <member name="T:FGISMmpkAddin.AutoMap2MmpkDockpaneView">
             <summary>
-            GenMap2MmpkWindow
+            AutoMap2MmpkDockpaneView
             </summary>
         </member>
-        <member name="M:FGISMmpkAddin.GenMap2MmpkWindow.InitializeComponent">
+        <member name="M:FGISMmpkAddin.AutoMap2MmpkDockpaneView.InitializeComponent">
             <summary>
             InitializeComponent
             </summary>

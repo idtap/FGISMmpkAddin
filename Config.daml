@@ -34,6 +34,14 @@
           <tooltip heading="Tooltip Heading">自動將影像圖層轉tbkx,向量圖層轉vtpk,然後打包成 mmpk 上傳 Portal<disabledText /></tooltip>
         </button>
       </controls>
+      <dockPanes>
+        <dockPane id="FGISMmpkAddin_AutoMap2MmpkDockpane" caption="自動轉換打包 mmpk 工具"
+            className="AutoMap2MmpkDockpaneViewModel" 
+            dock="group" 
+            dockWith="esri_core_contentsDockPane">
+          <content className="AutoMap2MmpkDockpaneView" />
+        </dockPane>
+      </dockPanes>
     </insertModule>
   </modules>
 </ArcGIS>
