@@ -1,6 +1,9 @@
-D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\Images\mmpkParam.json
+D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\CreateMMPK.py
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\CreateTPKX.py
+D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\CreateVTPK.py
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\empty.aprx
+D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\Images\mmpkParam.json
+D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\UploadMMPK.py
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.deps.json
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.dll
 D:\保育署\repos\FGISMmpkAddin\bin\Debug\net6.0-windows\FGISMmpkAddin.pdb

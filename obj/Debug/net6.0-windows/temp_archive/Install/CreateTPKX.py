@@ -17,22 +17,25 @@ try:
     sour_tif = sys.argv[1]
     tpkx_name = sys.argv[2]
 
-    arcpy.management.MakeRasterLayer(sour_tif,"Temp")
-    arcpy.SaveToLayerFile_management("Temp", "C:\\Temp\\temp.lyrx")
+    # 取下路徑
+    temp_path = os.path.dirname(sour_tif)+"\\"
 
-    aprx = arcpy.mp.ArcGISProject("C:\\Temp\\Temp.aprx")
+    arcpy.management.MakeRasterLayer(sour_tif,"Temp")
+    arcpy.SaveToLayerFile_management("Temp", temp_path+"temp.lyrx")
+
+    aprx = arcpy.mp.ArcGISProject(temp_path+"Temp.aprx")
     df =  aprx.listMaps("Map")[0]      
-    lf = arcpy.mp.LayerFile("C:\\Temp\\temp.lyrx")
+    lf = arcpy.mp.LayerFile(temp_path+"temp.lyrx")
     df.addLayer(lf)
     #aprx.save()
     arcpy.management.CreateMapTilePackage(
         df, 
         "ONLINE", 
-        "C:\\Temp\\"+tpkx_name+".tpkx",
+        temp_path+tpkx_name+".tpkx",
         "PNG8", 
         16
         )
-    print("C:\\Temp\\"+tpkx_name+".tpkx")
+    print(temp_path+tpkx_name+".tpkx")
     
 except Exception as ex:
     print("Failed,"+repr(ex))

@@ -1,8 +1,9 @@
 ﻿[
    {
-       "MmpkName":    "新竹自然保留區",
+       "MmpkName":    "upload_mmpk_1",
        "PortalUrl":   "https://demo.igis.com.tw/portal/",
        "UserID":      "saga",
-       "UserPassword":"shryu7041"
+       "UserPassword":"shryu7041",
+       "TempPath"    :"C:/Temp/"
    }
 ]

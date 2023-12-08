@@ -34,6 +34,7 @@ namespace FGISMmpkAddin
         public string PortalUrl { get; set; }
         public string UserID { get; set; }
         public string UserPassword { get; set; }
+        public string TempPath { get; set; }
     }
 
     public partial class AutoMap2MmpkDockpaneView : UserControl
@@ -41,12 +42,15 @@ namespace FGISMmpkAddin
         private static string mmpkParamPath = Utility.AddinAssemblyLocation()+"/Images/mmpkParam.json";
         private static string pathProExe = null;
         private static string pathPython = null;
+        private static string clipPolygonName = "ClipPolygon";
+        private static string tempRootPath = "D:\\mmpkTemp\\";
 
         public AutoMap2MmpkDockpaneView()
         {
             InitializeComponent();
             initNeed();
             LoadMmpkParam();
+            tempRootPath = txtTempPath.Text.ToString();
         }
 
         private void initNeed()
@@ -94,6 +98,7 @@ namespace FGISMmpkAddin
                 txtPortalUrl.Text   =tempLists[0].PortalUrl;
                 txtUserID.Text      =tempLists[0].UserID;
                 txtUserPassword.Text=tempLists[0].UserPassword;
+                txtTempPath.Text    =tempLists[0].TempPath;
             }
         }
 
@@ -105,7 +110,8 @@ namespace FGISMmpkAddin
                 MmpkName     =txtMmpkName.Text.ToString(),
                 PortalUrl    =txtPortalUrl.Text.ToString(),
                 UserID       =txtUserID.Text.ToString(),
-                UserPassword =txtUserPassword.Text.ToString()
+                UserPassword =txtUserPassword.Text.ToString(),
+                TempPath     =txtTempPath.Text.ToString()
             };
             tempLists.Add(param);
             Utility.SaveToJsonFile(mmpkParamPath, tempLists);
@@ -114,18 +120,21 @@ namespace FGISMmpkAddin
         private void CheckAndClearTemp()
         {
             // 預計輸出至 C:\Temp，檢查及清除
-            if( Directory.Exists("C:\\Temp") == false )
-                Directory.CreateDirectory("C:\\Temp");
+            if( Directory.Exists(tempRootPath) == false )
+                Directory.CreateDirectory(tempRootPath);
             // 複製空白 .aprx 檔
             var empty_aprx = System.IO.Path.Combine(pathPython, "empty.aprx");
-            if (System.IO.File.Exists("C:\\Temp\\Temp.aprx"))
-                System.IO.File.Delete("C:\\Temp\\Temp.aprx");
-            System.IO.File.Copy(empty_aprx,"C:\\Temp\\Temp.aprx");
+            if (System.IO.File.Exists(tempRootPath+"Temp.aprx"))
+                System.IO.File.Delete(tempRootPath+"Temp.aprx");
+            System.IO.File.Copy(empty_aprx,tempRootPath+"Temp.aprx");
+            // mmpk 也要刪除
+            if (System.IO.File.Exists(tempRootPath + "mmpkTemp.mmpk"))
+                System.IO.File.Delete(tempRootPath + "mmpkTemp.mmpk");
         }
 
         private string CreateTPKX( string sour_url, string tpkx_name )
         {
-            var tpkx_fullname = "C:\\Temp\\"+tpkx_name+".tpkx";
+            var tpkx_fullname = tempRootPath+tpkx_name+".tpkx";
             if( System.IO.File.Exists(tpkx_fullname) ) 
                 System.IO.File.Delete(tpkx_fullname);
 
@@ -144,14 +153,117 @@ namespace FGISMmpkAddin
             
         }
 
+        private async void clipLayerToFeatures(string clip_layer)
+        {
+            var out_file = tempRootPath+clip_layer+".shp";
+            var parameters = Geoprocessing.MakeValueArray(clip_layer, "POLYGON", out_file, "KEEP_GRAPHICS");
+            var results = await Geoprocessing.ExecuteToolAsync("conversion.GraphicsToFeatures", parameters);
+        }
+
+
+        private async void getClipFeature(string url, string clip_file, string clip_layer)
+        {
+            var clip_feature = tempRootPath+clip_layer+".shp";
+            var parameters = Geoprocessing.MakeValueArray(url, clip_feature, clip_file, null);
+            var results = await Geoprocessing.ExecuteToolAsync("analysis.Clip", parameters);
+            
+        }
+
+        private string CreateVTPK( string shp_file_path, string vtpk_name )
+        {
+            // 組合參數後執行
+            var param = shp_file_path+"  "+vtpk_name;
+            var result = RunPy("CreateVTPK.py", param);
+
+            return result;
+        }
+
+        private string CreateMMPK( string mmpk_file_path, int vtpk_count, int tpkx_count )
+        {
+            // 由 count 組合分號區隔 vtpk tpkx file list
+            var file_list = "";
+            for( var ii=0; ii<vtpk_count; ii++ )
+            {
+                var vtpk_file = "vtpk_"+(ii+1).ToString()+".vtpk";
+                if( !file_list.Equals("") )
+                    file_list += ";";
+                file_list += tempRootPath+vtpk_file;
+            }
+            for( var ii=0; ii<tpkx_count; ii++ )
+            {
+                var tpkx_file = "tpkx_"+(ii+1).ToString()+".tpkx";
+                if( !file_list.Equals("") )
+                    file_list += ";";
+                file_list += tempRootPath+tpkx_file;
+            }
+
+            // 組合參數後執行
+            var param = mmpk_file_path+"  "+file_list;
+            var result = RunPy("CreateMMPK.py", param);
+
+            return result;
+        }
+
+        private string UploadMMPK( string mmpk_file_path )
+        {
+            // 組合參數後執行
+            var mmpk_info = mmpk_file_path+";"+txtMmpkName.Text.ToString();
+
+            var url_id_pass = txtPortalUrl.Text.ToString()+";"+
+               txtUserID.Text.ToString()+";"+txtUserPassword.Text.ToString();
+
+            var param = mmpk_info+"  "+url_id_pass;
+            var result = RunPy("UploadMMPK.py", param);
+
+            return result;
+        }
+
+        private string GetRandomStringForFileName(int length)
+        {
+            var str = System.IO.Path.GetRandomFileName().Replace(".", "");
+            return str.Substring(0, length);
+        }
+
+        private async void RemoveAllTempLayer(int vtpk_count)
+        {
+            await QueuedTask.Run(() =>
+            {
+                // 移除 clip 的兩圖層
+                var clipGraphicLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<GraphicsLayer>()
+                                        .Where(e => e.Name == clipPolygonName).FirstOrDefault();
+                if (clipGraphicLayer != null)
+                    MapView.Active.Map.RemoveLayer(clipGraphicLayer);
+                var clipFeatureLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+                                        .Where(e => e.Name == clipPolygonName).FirstOrDefault();
+                if (clipFeatureLayer != null)
+                    MapView.Active.Map.RemoveLayer(clipFeatureLayer);
+            });
+        }
+
         private async void btnGenMmpkGo_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show("確定要執行嗎?", "執行確認", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
+                var response = "Failed,不明";
+
+                // 之前有 clipPolygon Feature 圖層先移除
+                await QueuedTask.Run(() =>
+                {
+                    var clipPolygonLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+                                        .Where(e => e.Name == clipPolygonName).FirstOrDefault();
+                    if (clipPolygonLayer != null)
+                        MapView.Active.Map.RemoveLayer(clipPolygonLayer);
+                });
+
+                // 取下所有圖層(因之後會有自動添加的，會變化)
+                List<Layer> layers = new List<Layer>();
+                IEnumerable<Layer> lrs = MapView.Active.Map.Layers;
+                foreach (Layer layer in lrs)
+                    layers.Add(layer);
+
                 // Step-1: 檢查是否有 MapServer，並取下此圖層 Extent
                 Envelope genExtent = null;
-                IEnumerable<Layer> layers = MapView.Active.Map.Layers;
                 foreach (Layer layer in layers)
                 {
                     var mtype = layer.GetType().ToString();
@@ -163,37 +275,59 @@ namespace FGISMmpkAddin
                         });
                         break;      // 以首個為範圍
                     }
-                }          
+                }      
+
                 if( genExtent == null ) 
                 {
-                    MessageBox.Show("查無掛入任何影像圖層無法繼續，請檢查後再試","錯誤");
-                    return;
+                    // 無影像圖層改用 map extent
+                    genExtent = MapView.Active.Extent;    
                 }
 
                 // 由 extent 建切割 polygon 圖層
-                Polygon polygon = PolygonBuilderEx.CreatePolygon(genExtent);
-                CIMGraphic polygonGraphic = null;
-                //await QueuedTask.Run(() =>
-                //{
-                //    polygonGraphic = GraphicFactory.Instance.CreateSimpleGraphic(polygon);
-                //});
-                var CreationParams = new GraphicsLayerCreationParams
-                {
-                    Name = "Clip Polygon",
-                    MapMemberPosition = MapMemberPosition.AutoArrange
-                };
-                //var myGraphicLayer = LayerFactory.Instance.CreateLayer<GraphicsLayer>(
-                //            CreationParams, MapView.Active.Map);
-                var _graphic = Utility.Graphics("Clip Polygon");
-
-                CIMStroke outline = SymbolFactory.Instance.ConstructStroke(
-                    ColorFactory.Instance.BlueRGB, 2.0, SimpleLineStyle.DashDotDot);
-                CIMPolygonSymbol polySym = SymbolFactory.Instance.ConstructPolygonSymbol(
-                    ColorFactory.Instance.RedRGB, SimpleFillStyle.ForwardDiagonal, outline);
+                Polygon polygon = null;                    
                 await QueuedTask.Run(() =>
                 {
-                    _graphic.Add(MapView.Active.AddOverlay(polygon, polySym.MakeSymbolReference()));
-                    //myGraphicLayer.AddElement(polygonGraphic);
+                    polygon = PolygonBuilderEx.CreatePolygon(genExtent);                    
+                });
+
+                // 建立 polygon GraphicLayer 圖層準備供切割圖資用
+                GraphicsLayer myGraphicLayer = null;
+                var CreationParams = new GraphicsLayerCreationParams
+                {
+                    Name = clipPolygonName,
+                    MapMemberPosition = MapMemberPosition.AutoArrange
+                };
+                await QueuedTask.Run(() =>
+                {
+                    myGraphicLayer = LayerFactory.Instance.CreateLayer<GraphicsLayer>(
+                                         CreationParams, MapView.Active.Map);
+                });
+                // 產生 polygon 圖徵
+                CIMGraphic polygonGraphic = null;
+                CIMStroke outline = SymbolFactory.Instance.ConstructStroke(
+                        ColorFactory.Instance.BlueRGB, 2.0, SimpleLineStyle.DashDotDot);
+                CIMPolygonSymbol polySym = SymbolFactory.Instance.ConstructPolygonSymbol(
+                        ColorFactory.Instance.RedRGB, SimpleFillStyle.ForwardDiagonal, outline);
+                await QueuedTask.Run(() =>
+                {
+                    polygonGraphic = GraphicFactory.Instance.CreateSimpleGraphic(polygon,polySym);
+                    myGraphicLayer.AddElement(polygonGraphic);
+                    myGraphicLayer.SetVisibility(true);
+                });              
+
+                // 切割圖層轉成 Feature(此因切割需用 Feature 為參數)
+                await QueuedTask.Run(() =>
+                { 
+                    clipLayerToFeatures(clipPolygonName);
+                });
+
+                // 切割 Layer 設為不可見
+                await QueuedTask.Run(() =>
+                { 
+                    var clipPolygonLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+                                        .Where(e => e.Name == clipPolygonName).FirstOrDefault();            
+                    if (clipPolygonLayer != null)
+                        clipPolygonLayer.SetVisibility(false);
                 });
 
                 // Step-2: 開始對每一個圖層處理，影像則製成 tbkx，向量則製成 vtpk
@@ -207,52 +341,94 @@ namespace FGISMmpkAddin
                 foreach (Layer layer in layers)
                 {
                     var mtype = layer.GetType().ToString();
-                    // 影像製作成 tbkx
                     bool bo = (bool)chkNoTpkx.IsChecked;
-                    if ( mtype.Contains("Tiled") && !bo )
+                    var url = layer?.GetType()?.GetProperty("URL")?.GetValue(layer).ToString();
+                    // 開始處理此圖層
+                    await QueuedTask.Run(async() =>
                     {
-                        var url = layer?.GetType()?.GetProperty("URL")?.GetValue(layer).ToString();
+                        // 影像製作成 tbkx                        
+                        if ( mtype.Contains("Tiled") && !bo )
+                        {                            
+                            // 以流水號命名
+                            tpkx_count = tpkx_count + 1;
+                            //var tpkx_name = txtMmpkName.Text.ToString();
+                            //tpkx_name += "_tpkx_"+tpkx_count.ToString();
+                            var tpkx_name = "tpkx_"+tpkx_count.ToString();
 
-                        // 以流水號命名
-                        tpkx_count = tpkx_count + 1;
-                        var tpkx_name = txtMmpkName.Text.ToString();
-                        tpkx_name += "_tpkx_"+tpkx_count.ToString();
-
-                        // 先以切割方式下載影像才可製作
-                        var clip_file = "C:\\Temp\\clipRaster_"+tpkx_count.ToString()+".tif";
-                        await QueuedTask.Run(() =>
-                        {
-                            getClipRaster(url, clip_file, genExtent);
-                        });
-                        var result2 = CreateTPKX(clip_file,tpkx_name);
-                        if( result2.Substring(0,6).Equals("Failed") )
-                        {
-                            MessageBox.Show(layer.URI.ToString(),"轉tpkx失敗");
-                            return;
+                            // 先以切割方式下載影像才可製作
+                            var clip_file = tempRootPath+"clipRaster_"+tpkx_count.ToString()+".tif";
+                            await QueuedTask.Run(() =>
+                            {
+                                getClipRaster(url, clip_file, genExtent);
+                            });
+                            response = CreateTPKX(clip_file,tpkx_name);
+                            if( response.Substring(0,6).Equals("Failed") )
+                            {
+                                MessageBox.Show(response.Substring(8), "轉tpkx失敗");
+                                RemoveAllTempLayer(vtpk_count);
+                                return;
+                            }
                         }
-                    }
-                    // feature layer 轉 vtpk
-                    else if( mtype.Contains("Feature") )   
-                    {
-                        var url = layer?.GetType()?.GetProperty("URL")?.GetValue(layer).ToString();
+                        // feature layer 轉 vtpk
+                        else if( mtype.Contains("Feature") )
+                        {
+                            // 以流水號命名
+                            vtpk_count = vtpk_count + 1;
+                            //var vtpk_name = txtMmpkName.Text.ToString();
+                            //vtpk_name += "_vtpk_"+vtpk_count.ToString();
+                            var vtpk_name = "vtpk_"+vtpk_count.ToString();
 
-                        // 以流水號命名
-                        vtpk_count = vtpk_count + 1;
-                        var vtpk_name = txtMmpkName.Text.ToString();
-                        vtpk_name += "_vtpk_"+vtpk_count.ToString();
+                            // 先以切割方式取下
+                            var clip_name = "clipTemp_"+vtpk_count.ToString();
+                            var clip_file = tempRootPath+clip_name+".shp";
 
-                        // 先以切割方式取下
-                        var clip_file = "C:\\Temp\\clipTemp_"+tpkx_count.ToString()+".tif";
-                        
-                    }            
+                            // 產生此向量 Feature 的切割
+                            await QueuedTask.Run(() =>
+                            {
+                                getClipFeature(layer.Name.ToString(), clip_file, clipPolygonName);
+                            });
+
+                            // Pro 會自動將此 Feature 加到 Map，此無必要，移除
+                            await QueuedTask.Run(() =>
+                            {
+                                var clipLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+                                        .Where(e => e.Name == clip_name).FirstOrDefault();            
+                                if (clipLayer != null)
+                                    MapView.Active.Map.RemoveLayer(clipLayer);
+                            });
+
+                            response = CreateVTPK(clip_file,vtpk_name);
+                            if( response.Substring(0,6).Equals("Failed") )
+                            {
+                                MessageBox.Show(response.Substring(8), "轉vtpk失敗");
+                                RemoveAllTempLayer(vtpk_count);
+                                return;
+                            }
+                        }
+                    });
                 }
 
                 // Step-3: 對所產生的 tpkx vtpk 開始打包成 mmpk
+                var mmpk_path = tempRootPath+GetRandomStringForFileName(10)+".mmpk";    
+                response = CreateMMPK(mmpk_path,vtpk_count,tpkx_count);
+                if( response.Substring(0,6).Equals("Failed") )
+                {
+                    MessageBox.Show(response.Substring(8),"轉 mmpk 失敗");
+                    return;
+                }
 
                 // Step-4: 將 mmpk 上傳
+                response = UploadMMPK(mmpk_path);
+                if( response.Substring(0,6).Equals("Failed") )
+                {
+                    MessageBox.Show(response.Substring(8),"上傳 mmpk 到 Portal 失敗");
+                    RemoveAllTempLayer(vtpk_count);
+                    return;
+                }
 
                 // 完成
                 MessageBox.Show("完成!!，可至 Portal 上檢查及下載該 mmpk","通知");
+                RemoveAllTempLayer(vtpk_count);
             }
         }
 
@@ -260,6 +436,11 @@ namespace FGISMmpkAddin
         {
             SaveMmpkParam();
             MessageBox.Show("已存入!!，按鍵繼續","通知");
+        }
+
+        private void txtTempPath_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            tempRootPath = txtTempPath.Text.ToString();
         }
     }
 

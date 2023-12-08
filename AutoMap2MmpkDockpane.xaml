@@ -8,16 +8,18 @@
              d:DataContext="{Binding Path=AutoMap2MmpkDockpaneViewModel}"
              d:DesignHeight="600" Width="360">
     <StackPanel HorizontalAlignment="Left" Width="360" Margin="4,4,4,4">
-        <Grid>
+        <Grid Height="546">
             <Grid.RowDefinitions>
-                <RowDefinition Height="147*"/>
-                <RowDefinition Height="167*"/>
-                <RowDefinition Height="100*"/>
+                <RowDefinition Height="187*"/>
+                <RowDefinition Height="248*"/>
+                <RowDefinition Height="111*"/>
             </Grid.RowDefinitions>
-            <Label Content="1.系統會將Map下所有圖層轉換，請將如底圖等不相關&#xA;   圖層移除&#xA;2.圖層中的影像圖層會自動轉 tpkx&#xA;3.圖層中的向量圖層會自動轉成 vtpk&#xA;4.完成後會以mmpk名稱打包上傳 portal&#xA;5.圖資範圍會以首個影像圖層為範圍" HorizontalAlignment="Left" Width="359" Margin="41,0,0,1" FontFamily="Microsoft JhengHei"/>
+            <Label Content="1.系統會將Map下所有圖層轉換，請將如底圖等不相關&#xA;   圖層移除&#xA;2.圖層中的影像圖層會自動轉 tpkx&#xA;3.圖層中的向量圖層會自動轉成 vtpk&#xA;4.完成後會以mmpk名稱打包上傳 portal&#xA;5.圖資範圍會以首個影像圖層為範圍，無影像圖層則以&#xA;  目前Map顯示為範圍&#xA;6.無論有無 mmpk，你都可到暫存路徑中直接&#xA;  複製使用 *.vtpk *.tbkx " HorizontalAlignment="Left" Width="359" Margin="41,0,0,1" FontFamily="Microsoft JhengHei"/>
             <Label Content="說明：" HorizontalAlignment="Left" VerticalAlignment="Top" Width="41" Height="25"/>
             <Grid Grid.Row="1" Margin="0,0,0,7">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="30*"/>
+                    <RowDefinition Height="30*"/>
                     <RowDefinition Height="30*"/>
                     <RowDefinition Height="30*"/>
                     <RowDefinition Height="30*"/>
@@ -36,9 +38,12 @@
                 <TextBox x:Name="txtUserID" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="256" Height="22" Margin="5,0,0,0" />
                 <Label Content="Password" HorizontalAlignment="Right" Grid.Row="3" VerticalAlignment="Center" Height="33" Width="64"/>
                 <TextBox x:Name="txtUserPassword" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="256" Height="22" Margin="5,0,0,0" />
-                <CheckBox x:Name="chkNoTpkx" Grid.Column="1" Content="不製作影像tpkx(以節省時間)" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="4" VerticalAlignment="Center" IsChecked="True"/>
+                <CheckBox x:Name="chkNoTpkx" Grid.Column="1" Content="不製作影像tpkx(以節省時間)" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="6" VerticalAlignment="Center" IsChecked="True"/>
+                <Label Content="作業暫存" HorizontalAlignment="Left" Margin="20,0,0,0" Grid.Row="4" VerticalAlignment="Center" Width="56" Height="30" Grid.ColumnSpan="2"/>
+                <TextBox x:Name="txtTempPath" Grid.Column="1" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="4" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="256" Height="22" TextChanged="txtTempPath_TextChanged"/>
+                <Label Grid.Column="1" Content="(註:無此暫存路徑時，系統會自動建立)" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="5" VerticalAlignment="Center" Width="256"/>
             </Grid>
-            <Button x:Name="btnGenMmpkGo" Content="開始執行" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Top" Height="22" Width="307" Click="btnGenMmpkGo_Click" Margin="0,47,0,0"/>
+            <Button x:Name="btnGenMmpkGo" Content="開始執行" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" Height="22" Width="308" Click="btnGenMmpkGo_Click"/>
             <Button x:Name="btnSaveParam" Content="參數保留" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Top" Height="22" Width="300" Click="btnSaveParam_Click" Margin="0,12,0,0"/>
         </Grid>
     </StackPanel>
