@@ -264,18 +264,19 @@ namespace FGISMmpkAddin
 
                 // Step-1: 檢查是否有 MapServer，並取下此圖層 Extent
                 Envelope genExtent = null;
-                foreach (Layer layer in layers)
-                {
-                    var mtype = layer.GetType().ToString();
-                    if( mtype.Contains("Tiled") )                // 以此判斷是否是影像
-                    {
-                        await QueuedTask.Run(() =>
-                        {
-                            genExtent = layer.QueryExtent();
-                        });
-                        break;      // 以首個為範圍
-                    }
-                }      
+                // 影像製作太慢,改不檢查
+                //foreach (Layer layer in layers)
+                //{
+                //    var mtype = layer.GetType().ToString();
+                //    if( mtype.Contains("Tiled") )                // 以此判斷是否是影像
+                //    {
+                //        await QueuedTask.Run(() =>
+                //        {
+                //            genExtent = layer.QueryExtent();
+                //        });
+                //        break;      // 以首個為範圍
+                //    }
+                //}      
 
                 if( genExtent == null ) 
                 {
@@ -410,6 +411,7 @@ namespace FGISMmpkAddin
 
                 // Step-3: 對所產生的 tpkx vtpk 開始打包成 mmpk
                 var mmpk_path = tempRootPath+GetRandomStringForFileName(10)+".mmpk";    
+
                 response = CreateMMPK(mmpk_path,vtpk_count,tpkx_count);
                 if( response.Substring(0,6).Equals("Failed") )
                 {

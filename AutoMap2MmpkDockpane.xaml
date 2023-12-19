@@ -14,7 +14,7 @@
                 <RowDefinition Height="248*"/>
                 <RowDefinition Height="111*"/>
             </Grid.RowDefinitions>
-            <Label Content="1.系統會將Map下所有圖層轉換，請將如底圖等不相關&#xA;   圖層移除&#xA;2.圖層中的影像圖層會自動轉 tpkx&#xA;3.圖層中的向量圖層會自動轉成 vtpk&#xA;4.完成後會以mmpk名稱打包上傳 portal&#xA;5.圖資範圍會以首個影像圖層為範圍，無影像圖層則以&#xA;  目前Map顯示為範圍&#xA;6.無論有無 mmpk，你都可到暫存路徑中直接&#xA;  複製使用 *.vtpk *.tbkx " HorizontalAlignment="Left" Width="359" Margin="41,0,0,1" FontFamily="Microsoft JhengHei"/>
+            <Label Content="1.系統會將Map下所有圖層轉換，請將如底圖等不相關&#xA;   圖層移除&#xA;2.圖層中的影像圖層會自動轉 tpkx&#xA;3.圖層中的向量圖層會自動轉成 vtpk&#xA;4.完成後會以mmpk名稱打包上傳 portal&#xA;5.圖資範圍以目前Map顯示為範圍&#xA;6.無論有無 mmpk，你都可到暫存路徑中直接&#xA;  複製使用 *.vtpk *.tbkx " HorizontalAlignment="Left" Width="359" Margin="41,0,0,1" FontFamily="Microsoft JhengHei"/>
             <Label Content="說明：" HorizontalAlignment="Left" VerticalAlignment="Top" Width="41" Height="25"/>
             <Grid Grid.Row="1" Margin="0,0,0,7">
                 <Grid.RowDefinitions>

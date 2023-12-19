@@ -33,7 +33,7 @@ try:
         "ONLINE", 
         temp_path+tpkx_name+".tpkx",
         "PNG8", 
-        16
+        14
         )
     print(temp_path+tpkx_name+".tpkx")
     
